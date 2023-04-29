@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -22,7 +23,7 @@ public:
     std::string get_printable_str();
 
     /// @brief runs the string through the automata and returns whether or not the string is accepted
-    bool is_accepcted(std::string str, bool verbose);
+    bool is_accepcted(std::string str, bool verbose = false);
 
     /// @brief returns whether or not this DFA is empty
     bool is_empty();
@@ -30,12 +31,37 @@ public:
     /// @brief returns whether or not this DFA is infinite
     bool is_infinite();
 
+    /// @brief returns all the accepting strings in this DFA. in an infinite DFA, this will only include some accepting strings
+    std::vector<std::string> get_all_accepting_strings();
+
+    /// @brief returns all the accepting strings in this DFA with the specified length
+    std::vector<std::string> get_all_accepting_strings_len(int length);
+
     /// @brief sets the given state as the init state
     void set_init_state(DFA_State* state);
+
+    /// @brief finds inaccaptable strings for this DFA
+    std::vector<std::string> find_inaccepting_strings(int count);
+
+    /// @brief returns all condition characters in this DFA
+    std::vector<char> get_all_conditions();
+
 
     /// @brief all states inside this DFA
     std::vector<DFA_State*> states;
 
+private:
+    void invalidate_caches() { 
+        this->all_accept_routes_cached.clear(); 
+        this->all_conditions_cached.clear(); 
+    }
+    void cache_all_accept_routes();
+    bool all_accept_routes_are_cahced() { return all_accept_routes_cached.size() != 0; }
+    void cache_all_conditions();
+    bool all_conditions_are_cahced() { return all_conditions_cached.size() != 0; }
+    
+    std::vector<std::vector<DFA_Node*>> all_accept_routes_cached; // empty means not yet cached
+    std::vector<char> all_conditions_cached;
 };
 
 class DFA_State {
