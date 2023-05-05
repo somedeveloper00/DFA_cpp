@@ -10,6 +10,7 @@ class DFA_State;
 
 class DFA {
 public:
+
     /// @brief adds a state to the DFA.
     void add_state(DFA_State* state);
     
@@ -45,6 +46,9 @@ public:
 
     /// @brief returns all condition characters in this DFA
     std::vector<char> get_all_conditions();
+
+    /// @brief complements this DFA
+    void complement();
 
 
     /// @brief all states inside this DFA

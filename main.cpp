@@ -85,6 +85,14 @@ void phase1(DFA& dfa) {
         auto all_possible_strings = dfa.get_all_accepting_strings_len(k);
         std::cout << "   -> " << all_possible_strings.size() << "\n";
     }
+
+    //9
+    {
+        std::cout << "9. complement of this DFA:\n";
+        DFA cDFA(dfa);
+        cDFA.complement();
+        std::cout << cDFA.get_printable_str() << "\n";
+    }
     
 }
 

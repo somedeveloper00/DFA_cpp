@@ -200,6 +200,12 @@ std::vector<char> DFA::get_all_conditions() {
     return this->all_conditions_cached;
 }
 
+void DFA::complement() {
+    for (size_t i = 0; i < this->states.size(); i++) {
+        this->states[i]->isAccept = !this->states[i]->isAccept;
+    }
+}
+
 void DFA::cache_all_accept_routes() {
     this->all_accept_routes_cached.clear();
     
