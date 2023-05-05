@@ -62,8 +62,13 @@ void DFA::disconnect(DFA_State* from, DFA_State* to, char condition) {
 
 std::string DFA::get_printable_str() {
     std::string str = "";
-    for (DFA_State* state : this->states) {
-        str += "state: " + state->name + (state->isAccept ? " (accept)" : "") + "\n";
+    size_t c = this->states.size();
+    for (size_t i = 0; i < c; i++) {
+        auto state = this->states[i];
+        str += "state: " + state->name 
+            + (state->isAccept ? " (accept)" : "") 
+            + (i == 0 ? " (init)" : "") 
+            + "\n";
         for (DFA_Node* node : state->nodes_next) {
             str += "    (";
             str += node->condition;

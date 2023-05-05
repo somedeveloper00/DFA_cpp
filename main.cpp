@@ -14,7 +14,7 @@ void phase1(DFA& dfa) {
 
     // 1
     {
-        std::cout << "1. " << "The DFA is " << (dfa.is_empty() ? "not empty" : "empty") << "\n";
+        std::cout << "1. " << "The DFA is " << (dfa.is_empty() ? "empty" : "not empty") << "\n";
     }
     
     // 2
@@ -100,18 +100,31 @@ int main(int argc, char const* argv[])
 {
     DFA dfa;
     DFA_interactive dfa_interactive(&dfa);
-    std::string cmd = 
-        "q0 A q1\n"
-        "q0 B q2\n"
-        "q1 A q2\n"
-        "q1 B q2\n"
-        "f q2\n"
-        "q2 A q2\n"
-        "q2 B q3\n"
-        "q3 A q3\n"
-        "q3 B q3\n"
-    ;
-    dfa_interactive.compile_interactive(cmd);
+
+    std::cout << "we have a demo DFA, you can use that or you can create a custom DFA.\n"
+                 "do you want to use the demo?[Y/N]";
+    char useDemo;
+    std::cin >> useDemo;
+
+    if (useDemo == 'Y' || useDemo == 'y'    ) {
+        std::string cmd = 
+            "q0 A q1\n"
+            "q0 B q2\n"
+            "q1 A q2\n"
+            "q1 B q2\n"
+            "f q2\n"
+            "q2 A q2\n"
+            "q2 B q3\n"
+            "q3 A q3\n"
+            "q3 B q3\n"
+        ;
+        dfa_interactive.compile_interactive(cmd);
+    } else {
+        std::cout << "\ncreating custom DFA. entering interactive DFA-CLI creation:\n";
+        dfa_interactive.print_help();
+        dfa_interactive.edit_interactive();
+    }
+
     std::cout << dfa.get_printable_str() << "\n";
     phase1(dfa);
     return 0;
