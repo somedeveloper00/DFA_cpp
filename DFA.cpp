@@ -257,20 +257,22 @@ void DFA::insersect_with(DFA* other) {
     // create all states and transitions
     while (new_transitions.size() > 0) {
         for (auto transition : new_transitions) {
-            // find destination index in states1 list
-            DFA_State* state1_dest;
-            auto state = new_states[std::get<0>(transition)].state1;
-            for (auto node : state->nodes_next) {
-                if (node->condition == std::get<1>(transition)) {
+            // extract tuple to simple variables
+            auto transition_fromstate = new_states[std::get<0>(transition)];
+            auto transition_condition = std::get<1>(transition);
+
+            // find destination in states1 list
+            DFA_State* state1_dest = nullptr;
+            for (auto node : transition_fromstate.state1->nodes_next) {
+                if (node->condition == transition_condition) {
                     state1_dest = node->state_to;
                     break;
                 }
             }
-            // find the destination index in states2 list
-            DFA_State* state2_dest;
-            state = new_states[std::get<0>(transition)].state2;
-            for (auto node : state->nodes_next) {
-                if (node->condition == std::get<1>(transition)) {
+            // find destination in states2 list
+            DFA_State* state2_dest = nullptr;
+            for (auto node : transition_fromstate.state2->nodes_next) {
+                if (node->condition == transition_condition) {
                     state2_dest = node->state_to;
                     break;
                 }
@@ -289,6 +291,11 @@ void DFA::insersect_with(DFA* other) {
                 new_states.push_back(NewState(state1_dest, state2_dest));
             }
 
+            // connect current_newstate to new_state_ind
+            transition_fromstate.nodes_next.push_back(std::tuple(&new_states[new_state_ind], transition_condition));
+
+            // TODO: populate new_transitions but take care of infinite loops
+            You Are Fucked.
         }
         
     }
