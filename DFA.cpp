@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <tuple>
 
 const int _get_route_search_length_limit(DFA* dfa) { return dfa->states.size() * 2 + 20; }
 
@@ -215,6 +216,83 @@ void DFA::complement() {
     for (size_t i = 0; i < this->states.size(); i++) {
         this->states[i]->isAccept = !this->states[i]->isAccept;
     }
+}
+
+void DFA::insersect_with(DFA* other) {
+    auto states1 = this->states;
+    auto states2 = other->states;
+
+    if (states1.size() == 0) {
+        this->states = states2;
+        return;
+    } else if (states2.size() == 0) {
+        return;
+    }
+
+    class NewState {
+    public:
+        NewState(DFA_State* state1, DFA_State* state2) {
+            this->state1 = state1;
+            this->state2 = state2;
+            this->isAccept = state1->isAccept && state2->isAccept;
+        }
+        DFA_State* state1;
+        DFA_State* state2;
+        bool isAccept;
+        std::vector<std::tuple<NewState*, char>> nodes_next;
+    };
+
+    std::vector<NewState> new_states(16);
+    new_states.push_back(NewState(states1[0], states2[0]));
+
+    // from new_states_ind index to the next state. 
+    // for each transition, we'll do a check. when we run out, we'll break the loop
+    std::vector<std::tuple<int, char>> new_transitions;
+
+    // adding initial transitions
+    for (auto node : states1[0]->nodes_next) {
+        new_transitions.push_back(std::tuple(0, states1[0]->nodes_next[0]->condition));
+    }
+    
+    // create all states and transitions
+    while (new_transitions.size() > 0) {
+        for (auto transition : new_transitions) {
+            // find destination index in states1 list
+            DFA_State* state1_dest;
+            auto state = new_states[std::get<0>(transition)].state1;
+            for (auto node : state->nodes_next) {
+                if (node->condition == std::get<1>(transition)) {
+                    state1_dest = node->state_to;
+                    break;
+                }
+            }
+            // find the destination index in states2 list
+            DFA_State* state2_dest;
+            state = new_states[std::get<0>(transition)].state2;
+            for (auto node : state->nodes_next) {
+                if (node->condition == std::get<1>(transition)) {
+                    state2_dest = node->state_to;
+                    break;
+                }
+            }
+
+            // if doesn't exist in new_states, create it
+            int new_state_ind = -1;
+            for (size_t i = 0; i < new_states.size(); i++) {
+                if (new_states[i].state1 == state1_dest && new_states[i].state2 == state2_dest) {
+                    new_state_ind = i;
+                    break;
+                }
+            }
+            if (new_state_ind == -1) {
+                new_state_ind = new_states.size();
+                new_states.push_back(NewState(state1_dest, state2_dest));
+            }
+
+        }
+        
+    }
+    
 }
 
 void DFA::cache_all_accept_routes() {

@@ -53,6 +53,9 @@ public:
     /// @brief complements this DFA
     void complement();
 
+    /// @brief intersects this DFA with the other DFA
+    void insersect_with(DFA* other);
+
 
     /// @brief all states inside this DFA
     std::vector<DFA_State*> states;
