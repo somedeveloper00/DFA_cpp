@@ -11,6 +11,9 @@ class DFA_State;
 class DFA {
 public:
 
+    DFA(DFA& other);
+    DFA(std::string name) {this->name = name; }
+
     /// @brief adds a state to the DFA.
     void add_state(DFA_State* state);
     
@@ -64,6 +67,7 @@ private:
     void cache_all_conditions();
     bool all_conditions_are_cahced() { return all_conditions_cached.size() != 0; }
     
+    std::string name;
     std::vector<std::vector<DFA_Node*>> all_accept_routes_cached; // empty means not yet cached
     std::vector<char> all_conditions_cached;
 };

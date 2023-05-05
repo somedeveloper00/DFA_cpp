@@ -10,6 +10,12 @@ const int _get_route_search_length_limit(DFA* dfa) { return dfa->states.size() *
 
 const int _get_max_accept_route_count(DFA* dfa) { return dfa->states.size() * dfa->get_all_conditions().size() + 20; }
 
+DFA::DFA(DFA& other) {
+    this->name = other.name;
+    for (size_t i = 0; i < other.states.size(); i++) {
+        this->states.push_back(new DFA_State(*other.states[i]));
+    }
+}
 
 void DFA::add_state(DFA_State* state) { this->states.push_back(state); }
 
@@ -61,7 +67,7 @@ void DFA::disconnect(DFA_State* from, DFA_State* to, char condition) {
 }
 
 std::string DFA::get_printable_str() {
-    std::string str = "";
+    std::string str = "\n--:" + this->name + "\n";
     size_t c = this->states.size();
     for (size_t i = 0; i < c; i++) {
         auto state = this->states[i];
